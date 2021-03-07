@@ -172,10 +172,21 @@ void StudentTextEditor::getPos(int& row, int& col) const {
 int StudentTextEditor::getLines(int startRow, int numRows, std::vector<std::string>& lines) const {
 	if (startRow < 0 || numRows < 0 || startRow > m_lines.size()) return -1;
 	lines.clear();
-	std::list<std::string>::const_iterator line = m_lines.begin();
-	for (int i = 0; i < startRow; ++i) {
-		++line;
+	// Traverse to starting row
+	std::list<std::string>::const_iterator line = m_currLine;
+	int dist = abs(m_row - startRow);
+	if (m_row > startRow) { // travel backwards
+		for (int i = 0; i < dist; ++i) {
+			--line;
+		}
 	}
+	else { // travel forwards
+		for (int i = 0; i < dist; ++i) {
+			++line;
+		}
+	}
+
+	// Add to lines
 	int n = 0;
 	for (; line != m_lines.end() && n < numRows; ++line) {
 		lines.push_back(*line);

@@ -20,7 +20,7 @@ private:
 		int col;
 		std::string text;
 	};
-	std::stack<StudentUndo::Item> m_actions;
+	std::stack<Item> m_actions;
 };
 
 #endif // STUDENTUNDO_H_
