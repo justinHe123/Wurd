@@ -65,14 +65,14 @@ void StudentTextEditor::move(Dir dir) {
 		if (m_row > 0) {
 			--m_row;
 			--m_currLine;
-			m_col = 0;
+			if (m_col > m_currLine->length()) m_col = m_currLine->length();
 		}
 		break;
 	case Dir::DOWN:
 		if (m_row + 1 < m_lines.size()) {
 			++m_row;
 			++m_currLine;
-			m_col = 0;
+			if (m_col > m_currLine->length()) m_col = m_currLine->length();
 		}
 		break;
 	case Dir::LEFT:
@@ -140,14 +140,17 @@ void StudentTextEditor::backspace() {
 
 void StudentTextEditor::insert(char ch) {
 	if (ch == '\t') {
-		m_currLine->insert(m_col, 4, ' ');
-		m_col += 4;
+		for (int i = 0; i < 4; ++i) {
+			m_currLine->insert(m_col, 1, ' ');
+			++m_col;
+			getUndo()->submit(Undo::INSERT, m_row, m_col, ' ');
+		}
 	}
 	else {
 		m_currLine->insert(m_col, 1, ch);
 		++m_col;
+		getUndo()->submit(Undo::INSERT, m_row, m_col, ch);
 	}
-	getUndo()->submit(Undo::INSERT, m_row, m_col, ch);
 	// TODO: Tell undo to track insertion 
 }
 
@@ -173,18 +176,7 @@ int StudentTextEditor::getLines(int startRow, int numRows, std::vector<std::stri
 	if (startRow < 0 || numRows < 0 || startRow > m_lines.size()) return -1;
 	lines.clear();
 	// Traverse to starting row
-	std::list<std::string>::const_iterator line = m_currLine;
-	int dist = abs(m_row - startRow);
-	if (m_row > startRow) { // travel backwards
-		for (int i = 0; i < dist; ++i) {
-			--line;
-		}
-	}
-	else { // travel forwards
-		for (int i = 0; i < dist; ++i) {
-			++line;
-		}
-	}
+	std::list<std::string>::const_iterator line = moveToLine(startRow);
 
 	// Add to lines
 	int n = 0;
@@ -196,8 +188,42 @@ int StudentTextEditor::getLines(int startRow, int numRows, std::vector<std::stri
 	// TODO
 }
 
+std::list<std::string>::iterator StudentTextEditor::moveToLine(int row) const {
+	std::list<std::string>::iterator line = m_currLine;
+	int dist = abs(m_row - row);
+	if (m_row > row) { // travel backwards
+		for (int i = 0; i < dist; ++i) {
+			--line;
+		}
+	}
+	else { // travel forwards
+		for (int i = 0; i < dist; ++i) {
+			++line;
+		}
+	}
+	return line;
+}
+
 void StudentTextEditor::undo() {
 	int row, col, count;
 	std::string text;
 	Undo::Action action = getUndo()->get(row, col, count, text);
+	switch (action) {
+	case Undo::Action::INSERT:
+		m_currLine = moveToLine(row);
+		m_row = row;
+		m_col = col;
+		m_currLine->insert(col, text);
+		break;
+	case Undo::Action::DELETE:
+		m_currLine = moveToLine(row);
+		m_row = row;
+		m_col = col;
+		m_currLine->erase(col, count);
+		break;
+	case Undo::Action::SPLIT:
+		break;
+	case Undo::Action::JOIN:
+		break;
+	}
 }

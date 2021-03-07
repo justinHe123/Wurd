@@ -25,11 +25,11 @@ private:
 	Node* m_head;
 	void addWord(std::string word);
 	void freeTrie(Node* curr);
-	int charToPos(char ch);
-	char posToChar(int pos);
-	bool isValid(char ch);
-	bool isSubword(int start, Node* base, const std::string& word);
-	void findSuggestions(int start, Node* base, std::string word, int max_suggestions, std::vector<std::string>& suggestions);
+	int charToPos(char ch) const;
+	char posToChar(int pos) const;
+	bool isValid(char ch) const;
+	bool isSubword(int start, Node* base, const std::string& word) const;
+	void findSuggestions(int start, Node* base, std::string word, int max_suggestions, std::vector<std::string>& suggestions) const;
 };
 
 #endif  // STUDENTSPELLCHECK_H_

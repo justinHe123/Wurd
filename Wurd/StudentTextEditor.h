@@ -28,6 +28,7 @@ private:
 	std::list<std::string>::iterator m_currLine;
 	int m_row;
 	int m_col;
+	std::list<std::string>::iterator moveToLine(int row) const;
 };
 
 #endif // STUDENTTEXTEDITOR_H_

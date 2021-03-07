@@ -63,15 +63,15 @@ void StudentSpellCheck::addWord(std::string word) {
 	curr->isWord = true;
 }
 
-int StudentSpellCheck::charToPos(char ch) {
+int StudentSpellCheck::charToPos(char ch) const {
 	return ch == '\'' ? 0 : tolower(ch) - 'a';
 }
 
-char StudentSpellCheck::posToChar(int pos) {
+char StudentSpellCheck::posToChar(int pos) const {
 	return pos == 0 ? '\'' : 'a' + pos;
 }
 
-bool StudentSpellCheck::isValid(char ch) {
+bool StudentSpellCheck::isValid(char ch) const {
 	return isalpha(ch) || ch == '\'';
 }
 
@@ -99,7 +99,7 @@ bool StudentSpellCheck::spellCheck(std::string word, int max_suggestions, std::v
 }
 
 // Check if subword exists in trie
-bool StudentSpellCheck::isSubword(int start, Node* base, const std::string& word) {
+bool StudentSpellCheck::isSubword(int start, Node* base, const std::string& word) const  {
 	if (base == nullptr) return false;
 	Node* curr = base;
 	int len = word.length();
@@ -111,7 +111,7 @@ bool StudentSpellCheck::isSubword(int start, Node* base, const std::string& word
 }
 
 // Finds words that differ only by the character at position start
-void StudentSpellCheck::findSuggestions(int start, Node* base, std::string word, int max_suggestions, std::vector<std::string>& suggestions) {
+void StudentSpellCheck::findSuggestions(int start, Node* base, std::string word, int max_suggestions, std::vector<std::string>& suggestions) const {
 	int len = word.length();
 	for (int i = 0; i < VALID_CHARS; ++i) {
 		if (suggestions.size() >= max_suggestions) return; // prevent from going over max

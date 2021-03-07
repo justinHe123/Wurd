@@ -21,6 +21,7 @@ private:
 		std::string text;
 	};
 	std::stack<Item> m_actions;
+	bool isValid(char ch) const;
 };
 
 #endif // STUDENTUNDO_H_
