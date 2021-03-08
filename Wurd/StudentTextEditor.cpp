@@ -56,6 +56,7 @@ void StudentTextEditor::reset() {
 	// TODO
 	m_lines.push_back("");
 	m_currLine = m_lines.begin();
+	getUndo()->clear();
 }
 
 void StudentTextEditor::move(Dir dir) {
@@ -109,13 +110,17 @@ void StudentTextEditor::del() {
 	}
 	// If after last character, not on last line (NOTE: Will submit '\0'
 	else if (m_row + 1 < m_lines.size()) {
-		std::string s1 = *m_currLine;
-		m_currLine = m_lines.erase(m_currLine);
-		*m_currLine = s1 + *m_currLine;
+		join();
 		getUndo()->submit(Undo::JOIN, m_row, m_col);
 	}
 
 	// TODO: Tell undo to track delete
+}
+
+void StudentTextEditor::join() {
+	std::string s1 = *m_currLine;
+	m_currLine = m_lines.erase(m_currLine);
+	*m_currLine = s1 + *m_currLine;
 }
 
 void StudentTextEditor::backspace() {
@@ -129,10 +134,8 @@ void StudentTextEditor::backspace() {
 	else if (m_row > 0){
 		--m_row;
 		--m_currLine;
-		m_col = m_currLine->size();
-		std::string s1 = *m_currLine;
-		m_currLine = m_lines.erase(m_currLine);
-		*m_currLine = s1 + *m_currLine;
+		m_col = m_currLine->length();
+		join();
 		getUndo()->submit(Undo::JOIN, m_row, m_col);
 	}
 	// TODO
@@ -156,6 +159,11 @@ void StudentTextEditor::insert(char ch) {
 
 void StudentTextEditor::enter() {
 	getUndo()->submit(Undo::SPLIT, m_row, m_col);
+	split();
+	// TODO: Tell undo to track split
+}
+
+void StudentTextEditor::split() {
 	std::string s1 = m_currLine->substr(0, m_col);
 	std::string s2 = m_currLine->substr(m_col);
 	*m_currLine = s2;
@@ -163,7 +171,6 @@ void StudentTextEditor::enter() {
 	++m_currLine;
 	++m_row;
 	m_col = 0;
-	// TODO: Tell undo to track split
 }
 
 void StudentTextEditor::getPos(int& row, int& col) const {
@@ -210,20 +217,26 @@ void StudentTextEditor::undo() {
 	Undo::Action action = getUndo()->get(row, col, count, text);
 	switch (action) {
 	case Undo::Action::INSERT:
-		m_currLine = moveToLine(row);
-		m_row = row;
-		m_col = col;
+		moveCurrToPos(row, col);
 		m_currLine->insert(col, text);
 		break;
 	case Undo::Action::DELETE:
-		m_currLine = moveToLine(row);
-		m_row = row;
-		m_col = col;
+		moveCurrToPos(row, col);
 		m_currLine->erase(col, count);
 		break;
 	case Undo::Action::SPLIT:
+		moveCurrToPos(row, col);
+		split();
 		break;
 	case Undo::Action::JOIN:
+		moveCurrToPos(row, col);
+		join();
 		break;
 	}
+}
+
+void StudentTextEditor::moveCurrToPos(int row, int col) {
+	m_currLine = moveToLine(row);
+	m_row = row;
+	m_col = col;
 }

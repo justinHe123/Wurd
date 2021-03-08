@@ -29,6 +29,9 @@ private:
 	int m_row;
 	int m_col;
 	std::list<std::string>::iterator moveToLine(int row) const;
+	void moveCurrToPos(int row, int col);
+	void split();
+	void join();
 };
 
 #endif // STUDENTTEXTEDITOR_H_

@@ -65,7 +65,7 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 		return Action::INSERT;
 		break;
 	case Action::JOIN:
-		return Action::JOIN;
+		return Action::SPLIT;
 		break;
 	}
 	// TODO
