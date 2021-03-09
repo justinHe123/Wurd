@@ -29,7 +29,7 @@ bool StudentTextEditor::load(std::string file) {
 	m_lines.clear();
 	std::string s;
 	while (getline(infile, s)) {
-		if (s.back() == '\r') s.erase(s.end() - 1);
+		if (s.length() > 0 && s.back() == '\r') s.erase(s.end() - 1);
 		m_lines.push_back(s);
 	}
 	m_currLine = m_lines.begin();

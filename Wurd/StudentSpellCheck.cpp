@@ -23,6 +23,7 @@ StudentSpellCheck::~StudentSpellCheck() {
 }
 
 void StudentSpellCheck::freeTrie(Node* curr) {
+	if (curr == nullptr) return;
 	for (int i = 0; i < VALID_CHARS; ++i) {
 		freeTrie(curr->next[i]);
 	}
