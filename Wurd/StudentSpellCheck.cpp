@@ -13,7 +13,7 @@ SpellCheck* createSpellCheck()
 const int VALID_CHARS = 27;
 
 StudentSpellCheck::StudentSpellCheck() {
-	m_head = new Node; // dummy head node
+	m_head = nullptr; // initialize to nullptr, change when you load
 }
 
 StudentSpellCheck::~StudentSpellCheck() {
@@ -34,6 +34,9 @@ bool StudentSpellCheck::load(std::string dictionaryFile) {
 	// Read in file
 	std::ifstream infile(dictionaryFile);
 	if (!infile) return false;
+	// Unload current dictionary
+	freeTrie(m_head);
+	m_head = new Node;
 	std::string s;
 	// Add words to trie
 	while (getline(infile, s)) {
