@@ -116,7 +116,6 @@ bool StudentSpellCheck::isSubword(int start, Node* base, const std::string& word
 
 // Finds words that differ only by the character at position start
 void StudentSpellCheck::findSuggestions(int start, Node* base, std::string word, int max_suggestions, std::vector<std::string>& suggestions) const {
-	int len = word.length();
 	for (int i = 0; i < VALID_CHARS; ++i) {
 		if (suggestions.size() >= max_suggestions) return; // prevent from going over max
 		if (isSubword(start + 1, base->next[i], word)) {

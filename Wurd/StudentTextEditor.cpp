@@ -232,6 +232,8 @@ void StudentTextEditor::undo() {
 		moveCurrToPos(row, col);
 		join();
 		break;
+	case Undo::Action::ERROR:
+		return; // do nothing
 	}
 }
 

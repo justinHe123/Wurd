@@ -14,18 +14,18 @@ void StudentUndo::submit(const Action action, int row, int col, char ch) {
 		m_actions.push(item);
 	}
 	else {
-		Item curr = m_actions.top();
-		// Check if del (previous delete was the same position
-		if (curr.action == Action::DELETE && curr.row == row && curr.col == col) {
+		Item prev = m_actions.top();
+		// Check if curr delete, prev del (previous delete was the same position)
+		if (action == Action::DELETE && prev.action == Action::DELETE && prev.row == row && prev.col == col) {
 			m_actions.top().text += ch;
 		}
-		// Check if backspace (previous delete was same row, col + 1)
-		else if (curr.action == Action::DELETE && curr.row == row && curr.col == col + 1) {
-			m_actions.top().text = ch + curr.text;
+		// Check if curr delete, prev backspace (previous delete was same row, col + 1)
+		else if (action == Action::DELETE && prev.action == Action::DELETE && prev.row == row && prev.col == col + 1) {
+			m_actions.top().text = ch + prev.text;
 			m_actions.top().col = col;
 		}
-		// Check if insert (previous insert was same row, col - 1) AND previous character was part of a word
-		else if (curr.action == Action::INSERT && curr.row == row && curr.col == col - 1 && isValid(curr.text[curr.text.length() - 1])) {
+		// Check if curr insert, prev insert (previous insert was same row, col - 1) AND previous character was part of a word
+		else if (action == Action::INSERT && prev.action == Action::INSERT && prev.row == row && prev.col == col - 1 && isValid(prev.text[prev.text.length() - 1])) {
 			m_actions.top().text += ch;
 			m_actions.top().col = col;
 		}
@@ -66,6 +66,9 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 		break;
 	case Action::JOIN:
 		return Action::SPLIT;
+		break;
+	default:
+		return Action::ERROR;
 		break;
 	}
 	// TODO
