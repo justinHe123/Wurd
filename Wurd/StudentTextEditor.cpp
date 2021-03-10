@@ -79,7 +79,7 @@ void StudentTextEditor::move(Dir dir) {
 		}
 		break;
 	case Dir::DOWN:
-		if (m_row + 1 < m_lines.size()) {
+		if ((m_row + 1) < m_lines.size()) {
 			++m_row;
 			++m_currLine;
 			if (m_col > m_currLine->length()) m_col = m_currLine->length();
@@ -95,7 +95,7 @@ void StudentTextEditor::move(Dir dir) {
 		break;
 	case Dir::RIGHT:
 		if (m_col < m_currLine->size()) ++m_col;
-		else if (m_row + 1 < m_lines.size()) {
+		else if ((m_row + 1) < m_lines.size()) {
 			++m_row;
 			++m_currLine;
 			m_col = 0;
@@ -118,7 +118,7 @@ void StudentTextEditor::del() {
 		m_currLine->erase(m_currLine->begin() + m_col);
 	}
 	// If after last character, not on last line (NOTE: Will submit '\0'
-	else if (m_row + 1 < m_lines.size()) {
+	else if ((m_row + 1) < m_lines.size()) {
 		join();
 		getUndo()->submit(Undo::JOIN, m_row, m_col);
 	}

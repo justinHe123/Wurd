@@ -132,11 +132,11 @@ void StudentSpellCheck::spellCheckLine(const std::string& line, std::vector<Spel
 	// Note character at end should be a null character - check end to make sure words at end are parsed
 	for (int i = 1; i <= len; ++i) {
 		// If curr valid and prev invalid, start of a new word
-		if (isValid(line[i]) && !isValid(line[i - 1])) start = i;
+		if (isValid(line[i]) && !isValid(line[(i - 1)])) start = i;
 		// If curr invalid and prev valid, end of a word -- check validity of word
-		else if (!isValid(line[i]) && isValid(line[i - 1])) {
+		else if (!isValid(line[i]) && isValid(line[(i - 1)])) {
 			// Add if problem word
-			if (!isSubword(0, m_head, line.substr(start, i - start))) {
+			if (!isSubword(0, m_head, line.substr(start, (i - start)))) {
 				SpellCheck::Position pos;
 				pos.start = start;
 				pos.end = i - 1;
