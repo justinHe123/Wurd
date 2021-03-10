@@ -30,6 +30,13 @@ bool StudentTextEditor::load(std::string file) {
 	std::string s;
 	while (getline(infile, s)) {
 		if (s.length() > 0 && s.back() == '\r') s.erase(s.end() - 1);
+		// Convert tabs to 4 spaces
+		for (int i = 0; i < s.length(); i++) {
+			if (s[i] == '\t') {
+				s.replace(i, 1, 4, ' ');
+				i += 3;
+			}
+		}
 		m_lines.push_back(s);
 	}
 	m_currLine = m_lines.begin();

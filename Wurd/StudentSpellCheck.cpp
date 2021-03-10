@@ -68,11 +68,11 @@ void StudentSpellCheck::addWord(std::string word) {
 }
 
 int StudentSpellCheck::charToPos(char ch) const {
-	return ch == '\'' ? 0 : tolower(ch) - 'a';
+	return ch == '\'' ? 26 : tolower(ch) - 'a';
 }
 
 char StudentSpellCheck::posToChar(int pos) const {
-	return pos == 0 ? '\'' : 'a' + pos;
+	return pos == 26 ? '\'' : 'a' + pos;
 }
 
 bool StudentSpellCheck::isValid(char ch) const {

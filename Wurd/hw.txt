@@ -1,0 +1,102 @@
+1.
+a.
+50
+	20
+		10
+			xx
+			15
+		40
+			30
+				25
+				32
+			xx
+	60
+		xx
+		70
+			65
+			80
+				78
+				xx
+
+b. 
+Inorder: 10, 15, 20, 25, 30, 32, 40, 50, 60, 65, 70, 78, 80	
+Preorder: 50, 20, 10, 15, 40, 30, 25, 32, 60, 70, 65, 80, 78
+Postorder: 15, 10, 25, 32, 30, 40, 20, 65, 78, 80, 70, 60, 50
+
+c.
+50
+	15
+		10
+		40
+			32
+				25
+				xx
+			xx
+	60
+		xx
+		70
+			65
+			80
+				78
+				xx
+
+2.
+a.
+struct Node {
+	int data;
+	Node* left;
+	Node* right;
+	Node* parent;
+};
+
+b. 
+void insert(int value) {
+	If the root is null:
+		Create a new node n with the given value and set the root to the newly created node
+		Set n's children to null, and n's parent to null.
+		Stop. 
+	Let the node curr start as the root node of the tree.
+	Until we hit a stopping point, perform the following:
+		If value == curr's value, stop (the value is already in the tree, so don't add it again)
+		If value > curr's value: 
+			If curr's right child is not null, set curr to it.
+			Otherwise: 
+				Create a node n with the given value and set it to curr's right child
+				Set n's children to null, and n's parent to curr.
+				Stop.
+		If value < curr's value:
+			If curr's left child is not null, set curr to it.
+			Otherwise: 
+				Create a node n with the given value and set it to curr's left child
+				Set n's children to null, and n's parent to curr.
+				Stop.
+}
+
+3.
+a.
+7
+	5
+		4
+		0
+	6
+		2
+		xx
+b.
+7, 5, 6, 4, 0, 2
+
+c. 
+6, 5, 2, 4, 0
+
+4.
+a. O(C + S)
+b. O(logC + S)
+c. O(logC + logS)
+d. O(logS)
+e. O(1)
+f. O(logC + S)
+g. O(S*logS)
+h. O(C*logS)
+
+
+
+
