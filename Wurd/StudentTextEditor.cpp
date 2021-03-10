@@ -40,6 +40,7 @@ bool StudentTextEditor::load(std::string file) {
 		}
 		m_lines.push_back(s);
 	}
+	if (m_lines.empty()) m_lines.push_back(""); // if empty file, push blank line
 	m_currLine = m_lines.begin();
 	m_row = 0;
 	m_col = 0;
