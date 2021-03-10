@@ -150,11 +150,9 @@ void StudentTextEditor::backspace() {
 
 void StudentTextEditor::insert(char ch) {
 	if (ch == '\t') {
-		for (int i = 0; i < 4; ++i) {
-			m_currLine->insert(m_col, 1, ' ');
-			++m_col;
-			getUndo()->submit(Undo::INSERT, m_row, m_col, ' ');
-		}
+		getUndo()->submit(Undo::INSERT, m_row, m_col + 1, '\t');
+		m_currLine->insert(m_col, 4, ' ');
+		m_col += 4;
 	}
 	else {
 		m_currLine->insert(m_col, 1, ch);
