@@ -27,6 +27,7 @@ bool StudentTextEditor::load(std::string file) {
 	std::ifstream infile(file);
 	if (!infile) return false;
 	m_lines.clear();
+	getUndo()->clear();
 	std::string s;
 	while (getline(infile, s)) {
 		if (s.length() > 0 && s.back() == '\r') s.erase(s.end() - 1);
