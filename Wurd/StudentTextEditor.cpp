@@ -234,6 +234,7 @@ void StudentTextEditor::undo() {
 	case Undo::Action::SPLIT:
 		moveCurrToPos(row, col);
 		split();
+		moveCurrToPos(row, col); // move cursor back after performing the split
 		break;
 	case Undo::Action::JOIN:
 		moveCurrToPos(row, col);
