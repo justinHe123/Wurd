@@ -24,32 +24,18 @@ void StudentUndo::submit(const Action action, int row, int col, char ch) {
 			m_actions.top().text = ch + prev.text;
 			m_actions.top().col = col;
 		}
-		// Check if curr insert, prev insert (previous insert was same row, col - 1) AND previous character was part of a word
-		else if (action == Action::INSERT && prev.action == Action::INSERT && prev.row == row && prev.col == col - 1 && isValid(prev.text[prev.text.length() - 1])) {
-			if (ch == '\t') {
-				m_actions.top().text += "    ";
-				m_actions.top().col = col + 3;
-			}
-			else {
-				m_actions.top().text += ch;
-				m_actions.top().col = col;
-			}
+		// Check if curr insert, prev insert (previous insert was same row, col - 1)
+		else if (action == Action::INSERT && prev.action == Action::INSERT && prev.row == row && prev.col == col - 1) {
+			m_actions.top().text += ch;
+			m_actions.top().col = col;
 		}
 		// Not a batchable operation
 		else {
 			Item item(action, row, col, ch);
-			if (ch == '\t') {
-				item.text = "    ";
-				item.col = col + 3;
-			}
 			m_actions.push(item);
 		}
 	}
 	// TODO: Figure out batching
-}
-
-bool StudentUndo::isValid(char ch) const {
-	return isalpha(ch) || ch == '\'';
 }
 
 StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string& text) {
