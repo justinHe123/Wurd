@@ -14,21 +14,24 @@ TextEditor* createTextEditor(Undo* un)
 StudentTextEditor::StudentTextEditor(Undo* undo)
  : TextEditor(undo), m_row(0), m_col(0) 
 {
+	// push new line to allow for editing of blank file
 	m_lines.push_back("");
-	m_currLine = m_lines.begin(); // TODO
+	m_currLine = m_lines.begin(); 
 }
 
 StudentTextEditor::~StudentTextEditor()
 {
-	// TODO
+	
 }
 
 bool StudentTextEditor::load(std::string file) {
 	std::ifstream infile(file);
 	if (!infile) return false;
+	// clear current document (and undo stack)
 	m_lines.clear();
 	getUndo()->clear();
 	std::string s;
+	// add each line
 	while (getline(infile, s)) {
 		if (s.length() > 0 && s.back() == '\r') s.erase(s.end() - 1);
 		// Convert tabs to 4 spaces
@@ -44,7 +47,7 @@ bool StudentTextEditor::load(std::string file) {
 	m_currLine = m_lines.begin();
 	m_row = 0;
 	m_col = 0;
-	return true;  // TODO
+	return true;
 }
 
 bool StudentTextEditor::save(std::string file) {
@@ -55,14 +58,14 @@ bool StudentTextEditor::save(std::string file) {
 		outfile << *it << '\n';
 	}
 
-	return true;  // TODO
+	return true;
 }
 
 void StudentTextEditor::reset() {
 	m_lines.clear();
 	m_row = 0;
 	m_col = 0;
-	// TODO
+	// push blank line and clear undo stack
 	m_lines.push_back("");
 	m_currLine = m_lines.begin();
 	getUndo()->clear();
@@ -71,21 +74,21 @@ void StudentTextEditor::reset() {
 void StudentTextEditor::move(Dir dir) {
 	switch (dir)
 	{
-	case Dir::UP:
+	case Dir::UP: // move up row
 		if (m_row > 0) {
 			--m_row;
 			--m_currLine;
 			if (m_col > m_currLine->length()) m_col = m_currLine->length();
 		}
 		break;
-	case Dir::DOWN:
+	case Dir::DOWN: // move down row
 		if ((m_row + 1) < m_lines.size()) {
 			++m_row;
 			++m_currLine;
 			if (m_col > m_currLine->length()) m_col = m_currLine->length();
 		}
 		break;
-	case Dir::LEFT:
+	case Dir::LEFT: // move col left
 		if (m_col > 0) --m_col;
 		else if (m_row > 0) {
 			--m_row;
@@ -93,7 +96,7 @@ void StudentTextEditor::move(Dir dir) {
 			m_col = m_currLine->size();
 		}
 		break;
-	case Dir::RIGHT:
+	case Dir::RIGHT: // move col right
 		if (m_col < m_currLine->size()) ++m_col;
 		else if ((m_row + 1) < m_lines.size()) {
 			++m_row;
@@ -101,31 +104,29 @@ void StudentTextEditor::move(Dir dir) {
 			m_col = 0;
 		}
 		break;
-	case Dir::HOME:
+	case Dir::HOME: // go to start of line
 		m_col = 0;
 		break;
-	case Dir::END:
+	case Dir::END: // go to end of line
 		m_col = m_currLine->size();
 		break;
 	}
-	// TODO
 }
 
 void StudentTextEditor::del() {
-	// If valid character
+	// If valid character, delete
 	if (m_col < m_currLine->size()) {
 		getUndo()->submit(Undo::DELETE, m_row, m_col, (*m_currLine)[m_col]);
 		m_currLine->erase(m_currLine->begin() + m_col);
 	}
-	// If after last character, not on last line (NOTE: Will submit '\0'
+	// If after last character, not on last line, then join w/ next line
 	else if ((m_row + 1) < m_lines.size()) {
 		join();
 		getUndo()->submit(Undo::JOIN, m_row, m_col);
 	}
-
-	// TODO: Tell undo to track delete
 }
 
+// Join current line with next line
 void StudentTextEditor::join() {
 	std::string s1 = *m_currLine;
 	m_currLine = m_lines.erase(m_currLine);
@@ -133,13 +134,13 @@ void StudentTextEditor::join() {
 }
 
 void StudentTextEditor::backspace() {
-	// If valid character
+	// If valid character, delete
 	if (m_col > 0) {
 		--m_col;
 		getUndo()->submit(Undo::DELETE, m_row, m_col, (*m_currLine)[m_col]);
 		m_currLine->erase(m_currLine->begin() + m_col);
 	}
-	// If at first character of line/line is empty AND not on first line
+	// If at first character of line/line is empty AND not on first line, then join w/ prev line
 	else if (m_row > 0){
 		--m_row;
 		--m_currLine;
@@ -147,11 +148,10 @@ void StudentTextEditor::backspace() {
 		join();
 		getUndo()->submit(Undo::JOIN, m_row, m_col);
 	}
-	// TODO
 }
 
 void StudentTextEditor::insert(char ch) {
-	if (ch == '\t') {
+	if (ch == '\t') { // Replace tab w/ 4 spaces
 		for (int i = 0; i < 4; ++i) {
 			m_currLine->insert(m_col, 1, ' ');
 			++m_col;
@@ -164,15 +164,15 @@ void StudentTextEditor::insert(char ch) {
 		++m_col;
 		getUndo()->submit(Undo::INSERT, m_row, m_col, ch);
 	}
-	// TODO: Tell undo to track insertion 
 }
 
+// Split line at current position
 void StudentTextEditor::enter() {
 	getUndo()->submit(Undo::SPLIT, m_row, m_col);
 	split();
-	// TODO: Tell undo to track split
 }
 
+// Splits line
 void StudentTextEditor::split() {
 	std::string s1 = m_currLine->substr(0, m_col);
 	std::string s2 = m_currLine->substr(m_col);
@@ -186,11 +186,10 @@ void StudentTextEditor::split() {
 void StudentTextEditor::getPos(int& row, int& col) const {
 	row = m_row;
 	col = m_col;
-	// TODO
 }
 
 int StudentTextEditor::getLines(int startRow, int numRows, std::vector<std::string>& lines) const {
-	if (startRow < 0 || numRows < 0 || startRow > m_lines.size()) return -1;
+	if (startRow < 0 || numRows < 0 || startRow > m_lines.size()) return -1; // invalid position
 	lines.clear();
 	// Traverse to starting row
 	std::list<std::string>::const_iterator line = moveToLine(startRow);
@@ -202,9 +201,9 @@ int StudentTextEditor::getLines(int startRow, int numRows, std::vector<std::stri
 		++n;
 	}
 	return n;
-	// TODO
 }
 
+// returns iterator to the line at the row
 std::list<std::string>::iterator StudentTextEditor::moveToLine(int row) const {
 	std::list<std::string>::iterator line = m_currLine;
 	int dist = abs(m_row - row);
@@ -226,20 +225,20 @@ void StudentTextEditor::undo() {
 	std::string text;
 	Undo::Action action = getUndo()->get(row, col, count, text);
 	switch (action) {
-	case Undo::Action::INSERT:
+	case Undo::Action::INSERT: // insert specified characters starting at position
 		moveCurrToPos(row, col);
 		m_currLine->insert(col, text);
 		break;
-	case Undo::Action::DELETE:
+	case Undo::Action::DELETE: // delete specified count starting at position
 		moveCurrToPos(row, col);
 		m_currLine->erase(col, count);
 		break;
-	case Undo::Action::SPLIT:
+	case Undo::Action::SPLIT: // split at given position
 		moveCurrToPos(row, col);
 		split();
 		moveCurrToPos(row, col); // move cursor back after performing the split
 		break;
-	case Undo::Action::JOIN:
+	case Undo::Action::JOIN: // join at given position
 		moveCurrToPos(row, col);
 		join();
 		break;
@@ -248,6 +247,7 @@ void StudentTextEditor::undo() {
 	}
 }
 
+// move private members to given position
 void StudentTextEditor::moveCurrToPos(int row, int col) {
 	m_currLine = moveToLine(row);
 	m_row = row;

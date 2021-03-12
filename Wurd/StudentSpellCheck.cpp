@@ -19,7 +19,6 @@ StudentSpellCheck::StudentSpellCheck() {
 StudentSpellCheck::~StudentSpellCheck() {
 	// Clear dynamically allocated nodes
 	freeTrie(m_head);
-	// TODO
 }
 
 void StudentSpellCheck::freeTrie(Node* curr) {
@@ -42,7 +41,7 @@ bool StudentSpellCheck::load(std::string dictionaryFile) {
 	while (getline(infile, s)) {
 		addWord(s);
 	}
-	return true; // TODO
+	return true;
 }
 
 void StudentSpellCheck::addWord(std::string word) {
@@ -99,7 +98,7 @@ bool StudentSpellCheck::spellCheck(std::string word, int max_suggestions, std::v
 		if (curr == nullptr) break; // no valid suggestions past this point
 	}
 
-	return false; // TODO
+	return false;
 }
 
 // Check if subword exists in trie
@@ -144,5 +143,4 @@ void StudentSpellCheck::spellCheckLine(const std::string& line, std::vector<Spel
 			}
 		}
 	}
-	// TODO
 }

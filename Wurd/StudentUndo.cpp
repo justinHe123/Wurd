@@ -35,7 +35,6 @@ void StudentUndo::submit(const Action action, int row, int col, char ch) {
 			m_actions.push(item);
 		}
 	}
-	// TODO: Figure out batching
 }
 
 StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string& text) {
@@ -47,10 +46,11 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 	count = 1;
 	text = "";
 	Action action = item.action;
+	// send the opposite action back
 	switch (action) {
 	case Action::INSERT:
 		count = item.text.size();
-		col -= count;
+		col -= count; // decrement col by count to get to start of where to delete
 		return Action::DELETE;
 		break;
 	case Action::SPLIT:
@@ -67,10 +67,8 @@ StudentUndo::Action StudentUndo::get(int &row, int &col, int& count, std::string
 		return Action::ERROR;
 		break;
 	}
-	// TODO
 }
 
 void StudentUndo::clear() {
-	while (!m_actions.empty()) m_actions.pop();
-	// TODO
+	while (!m_actions.empty()) m_actions.pop(); // clear the stack
 }
